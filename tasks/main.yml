@@ -1,0 +1,29 @@
+---
+
+- name: Ensure nginx php installed
+  pkgin: name=memcached,nginx,php55-fpm,php55-iconv,php55-mbstring,php55-curl,php55-xmlrpc,php55-zip,php55-gd,php55-dom,php55-intl,php55-json,php55-pgsql,php55-ldap,php55-zlib,php55-soap,php55-opcache,php55-memcache,php55-memcached state=present
+  sudo: True
+
+- name: Ensure webroot directory
+  file: path=/opt/local/share/htdocs owner=www group=www mode=755 state=directory
+
+- name: Ensure nginx conf
+  copy: src=nginx.conf dest=/opt/local/etc/nginx/nginx.conf
+  notify: Restart Nginx
+
+- name: Ensure php-fpm conf
+  copy: src=php-fpm.conf dest=/opt/local/etc/php-fpm.conf
+  notify: Restart PHP
+
+- name: Ensure php conf
+  copy: src=php.ini dest=/opt/local/etc/php.ini
+  notify: Restart PHP
+
+- name: Ensure memCached enabled
+  service: name=memcached:default state=started enabled=yes
+
+- name: Ensure PHP enabled
+  service: name=php-fpm state=started enabled=yes
+
+- name: Ensure Nginx enabled
+  service: name=nginx state=started enabled=yes
